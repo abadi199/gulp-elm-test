@@ -1,0 +1,29 @@
+{
+  "name": "gulp-elm-test",
+  "version": "0.0.1",
+  "description": "Gulp plugin for running elm-test",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abadi199/gulp-elm-test.git"
+  },
+  "keywords": [
+    "gulp",
+    "elm",
+    "elm-test"
+  ],
+  "author": "Abadi Kurniawan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/abadi199/gulp-elm-test/issues"
+  },
+  "homepage": "https://github.com/abadi199/gulp-elm-test#readme",
+  "devDependencies": {
+    "elm-test": "^0.16.1-alpha3",
+    "through2": "^2.0.1",
+    "gulp-elm": "^0.4.1"
+  }
+}
