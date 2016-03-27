@@ -15,7 +15,7 @@ function init() {
 
   proc.stderr.on('data', (stderr) => {
     if (argv.verbose) {
-      console.log(`${stderr}`);
+      gutil.log(`${stderr}`);
     }
     bStderr = Buffer.concat([bStderr, new Buffer(stderr)]);
   });
@@ -40,7 +40,7 @@ function filename(file) {
  * @param {string} file - Elm test file.
  */
 function runTest(file) {
-  console.log(`Running test ${filename(file)} ...`);
+  gutil.log(`Running test ${filename(file)} ...`);
 
   const deferred = Q.defer();
   const proc = spawn('elm-test', [file.path]);
@@ -49,21 +49,21 @@ function runTest(file) {
 
   proc.stderr.on('data', (stderr) => {
     if (argv.verbose) {
-      console.log(`${stderr}`);
+      gutil.log(`${stderr}`);
     }
     bStderr = Buffer.concat([bStderr, new Buffer(stderr)]);
   });
 
   proc.stdout.on('data', (data) => {
     if (argv.verbose) {
-      console.log(`${data}`);
+      gutil.log(`${data}`);
     }
     bStdout = Buffer.concat([bStdout, new Buffer(data)]);
   });
 
   proc.on('close', (code) => {
     if (argv.verbose) {
-      console.log(`exit with code ${code}`);
+      gutil.log(`exit with code ${code}`);
     }
     if (code > 0) {
       deferred.reject(new gutil.PluginError(PLUGIN, "failed test"));
@@ -84,13 +84,13 @@ function task() {
     init()
       .then(() => runTest(file))
       .then((output) => {
-        console.log(`succeed test: ${filename(file)}`);
+        gutil.log(`succeed test: ${filename(file)}`);
         callback(null, output)
       })
       .catch((error) => {
         const errorMessage = `${error.message}: ${filename(file)}`;
         errors.push(errorMessage);
-        console.log(errorMessage);
+        gutil.log(errorMessage);
         callback(); // delay errors until all test ran.
       });
   }).on('end', function end() {

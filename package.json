@@ -1,6 +1,6 @@
 {
   "name": "gulp-elm-test",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Gulp plugin for running elm-test",
   "main": "index.js",
   "scripts": {
