@@ -22,8 +22,13 @@
   },
   "homepage": "https://github.com/abadi199/gulp-elm-test#readme",
   "devDependencies": {
-    "elm-test": "^0.16.1-alpha3",
-    "through2": "^2.0.1",
-    "gulp-elm": "^0.4.1"
+    "cross-spawn-async": "^2.1.9",
+    "gulp-elm": "^0.4.1",
+    "minimist": "^1.2.0",
+    "q": "^1.4.1",
+    "through2": "^2.0.1"
+  },
+  "peerDependencies": {
+    "elm-test": "^0.16.1-alpha3"
   }
 }
