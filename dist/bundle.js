@@ -11765,12 +11765,19 @@ $__System.registerDynamic("1", ["83", "4c", "c0", "c5", "48"], true, function($_
     });
     return deferred.promise;
   }
+  function filename(file) {
+    return file.path.replace(file.base, '');
+  }
   function runTest(file) {
+    console.log(`Running test ${filename(file)} ...`);
     const deferred = Q.defer();
     const proc = spawn('elm-test', [file.path]);
     var bStderr = new Buffer(0);
     var bStdout = new Buffer(0);
     proc.stderr.on('data', (stderr) => {
+      if (argv.verbose) {
+        console.log(`${stderr}`);
+      }
       bStderr = Buffer.concat([bStderr, new Buffer(stderr)]);
     });
     proc.stdout.on('data', (data) => {
@@ -11780,6 +11787,9 @@ $__System.registerDynamic("1", ["83", "4c", "c0", "c5", "48"], true, function($_
       bStdout = Buffer.concat([bStdout, new Buffer(data)]);
     });
     proc.on('close', (code) => {
+      if (argv.verbose) {
+        console.log(`exit with code ${code}`);
+      }
       if (code > 0) {
         deferred.reject(new gutil.PluginError(PLUGIN, "failed test"));
       } else {
@@ -11789,8 +11799,23 @@ $__System.registerDynamic("1", ["83", "4c", "c0", "c5", "48"], true, function($_
     return deferred.promise;
   }
   function task() {
+    const errors = [];
     return through.obj((file, encoding, callback) => {
-      init().then(() => runTest(file)).then((output) => callback(null, output)).catch((error) => callback(error));
+      init().then(() => runTest(file)).then((output) => {
+        console.log(`succeed test: ${filename(file)}`);
+        callback(null, output);
+      }).catch((error) => {
+        const errorMessage = `${error.message}: ${filename(file)}`;
+        errors.push(errorMessage);
+        console.log(errorMessage);
+        callback();
+      });
+    }, (callback) => {
+      if (errors.length > 0) {
+        callback(errors.join('\n'));
+      } else {
+        callback();
+      }
     });
   }
   module.exports = task;
