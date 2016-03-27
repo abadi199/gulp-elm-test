@@ -40,6 +40,7 @@ function runTest(file) {
   var bStdout = new Buffer(0);
 
   proc.stderr.on('data', (stderr) => {
+    if (argv.verbose) { console.log(`${stderr}`); }
     bStderr = Buffer.concat([bStderr, new Buffer(stderr)]);
   });
 
@@ -49,6 +50,7 @@ function runTest(file) {
   });
 
   proc.on('close', (code) => {
+    if (argv.verbose) { console.log(`exit with code ${code}`); }
     if (code > 0) {
       deferred.reject(new gutil.PluginError(PLUGIN, "failed test"));
     } else {
