@@ -93,11 +93,11 @@ function task() {
         console.log(errorMessage);
         callback(); // delay errors until all test ran.
       });
-  }, (callback) => {
+  }).on('end', function end() {
     if (errors.length > 0) {
-      callback(errors.join('\n'));
-    } else {
-      callback();
+      this.emit('error', new gutil.PluginError('gulp-mocha', errors.join('\n'), {
+        showStack: (argv.verbose) ? true : false
+      }));
     }
   });
 }

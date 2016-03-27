@@ -11810,11 +11810,9 @@ $__System.registerDynamic("1", ["83", "4c", "c0", "c5", "48"], true, function($_
         console.log(errorMessage);
         callback();
       });
-    }, (callback) => {
+    }).on('end', function end() {
       if (errors.length > 0) {
-        callback(errors.join('\n'));
-      } else {
-        callback();
+        this.emit('error', new gutil.PluginError('gulp-mocha', errors.join('\n'), {showStack: (argv.verbose) ? true : false}));
       }
     });
   }
