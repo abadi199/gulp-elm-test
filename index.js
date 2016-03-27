@@ -11,9 +11,16 @@ const PLUGIN = 'gulp-elm-test';
 function init() {
   const deferred = Q.defer();
   const proc = spawn('elm-make', ['--yes']);
+  var bStderr = new Buffer(0);
+
+  proc.stderr.on('data', (stderr) => {
+    if (argv.verbose) { console.log(`${stderr}`); }
+    bStderr = Buffer.concat([bStderr, new Buffer(stderr)]);
+  });
+
   proc.on('close', (code) => {
     if (code > 0) {
-      deferred.reject(new gutil.PluginError(PLUGIN, err));
+      deferred.reject(new gutil.PluginError(PLUGIN, bStderr.toString()));
     } else {
       deferred.resolve();
     }
@@ -29,15 +36,15 @@ function init() {
 function runTest(file) {
   const deferred = Q.defer();
   const proc = spawn('elm-test', [file.path]);
-  const bStderr = new Buffer(0);
-  const bStdout = new Buffer(0);
+  var bStderr = new Buffer(0);
+  var bStdout = new Buffer(0);
 
   proc.stderr.on('data', (stderr) => {
     bStderr = Buffer.concat([bStderr, new Buffer(stderr)]);
   });
 
   proc.stdout.on('data', (data) => {
-    console.log(`${data}`);
+    if (argv.verbose) { console.log(`${data}`); }
     bStdout = Buffer.concat([bStdout, new Buffer(data)]);
   });
 
@@ -65,3 +72,4 @@ function task() {
 }
 
 module.exports = task;
+module.exports.init = init;
