@@ -1,8 +1,8 @@
 {
   "name": "gulp-elm-test",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Gulp plugin for running elm-test",
-  "main": "dist/bundle.js",
+  "main": "index.js",
   "scripts": {
     "test": "cd examples && mocha ./test/main.js",
     "bundle": "jspm bundle-sfx index.js dist/bundle.js --format cjs --skip-source-maps"
