@@ -1,6 +1,6 @@
 {
   "name": "gulp-elm-test",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Gulp plugin for running elm-test",
   "main": "dist/bundle.js",
   "scripts": {
@@ -32,12 +32,6 @@
   "peerDependencies": {
     "elm-test": "^0.16.1-alpha3"
   },
-  "bundledDependencies": [
-    "cross-spawn-async",
-    "minimist",
-    "q",
-    " through2"
-  ],
   "jspm": {
     "dependencies": {
       "cross-spawn-async": "npm:cross-spawn-async@^2.1.9",
