@@ -1,7 +1,12 @@
 # gulp-elm-test
-Gulp plugin for running [elm-test](https://github.com/deadfoxygrandpa/elm-test)
+Gulp plugin for running [elm-test](https://github.com/deadfoxygrandpa/elm-test).
 
-Example:
+## Install
+```
+$ npm install --save-dev gulp-elm-test
+```
+
+## Usage
 ```JavaScript
 const gulp = require('gulp');
 const elmTest = require('gulp-elm-test');
