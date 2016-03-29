@@ -84,7 +84,7 @@ function task() {
     init()
       .then(() => runTest(file))
       .then((output) => {
-        gutil.log(`succeed test: ${filename(file)}`);
+        gutil.log(`Successful test: ${filename(file)}`);
         callback(null, output)
       })
       .catch((error) => {
