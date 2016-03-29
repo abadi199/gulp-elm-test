@@ -95,7 +95,7 @@ function task() {
       });
   }).on('end', function end() {
     if (errors.length > 0) {
-      this.emit('error', new gutil.PluginError('gulp-mocha', errors.join('\n'), {
+      this.emit('error', new gutil.PluginError('gulp-elm-test', errors.join('\n'), {
         showStack: (argv.verbose) ? true : false
       }));
     }
