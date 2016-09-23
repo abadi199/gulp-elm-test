@@ -1,5 +1,5 @@
 # gulp-elm-test
-Gulp plugin for running [elm-test](https://github.com/deadfoxygrandpa/elm-test).
+Gulp plugin for running [elm-test](https://www.npmjs.com/package/elm-test).
 
 ## Install
 ```
