@@ -1,21 +1,23 @@
-module Main where
+port module Main exposing (main)
 
-import Basics exposing (..)
-import Signal exposing (..)
-
-import ElmTest exposing (..)
-import Console exposing (IO, run)
-import Task
 import String
+import Test exposing (Test, test, describe)
+import Expect
+import Test.Runner.Node exposing (run)
+import Json.Encode exposing (Value)
+
 
 tests : Test
-tests = suite "A Test Suite"
-        [ test "Addition" (assertEqual (3 + 7) 10)
-        , test "String.left" (assertEqual "a" (String.left 1 "abcdefg"))
+tests =
+    describe "A Test Suite"
+        [ test "Addition" <| \() -> 3 + 7 |> Expect.equal 10
+        , test "String.left" <| \() -> String.left 1 "abcdefg" |> Expect.equal "a"
         ]
 
-console : IO ()
-console = consoleRunner tests
 
-port runner : Signal (Task.Task x ())
-port runner = run console
+main : Program Value
+main =
+    run emit tests
+
+
+port emit : ( String, Value ) -> Cmd msg

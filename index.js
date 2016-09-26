@@ -1,106 +1,92 @@
+const _ = require('lodash')
+const spawn = require('cross-spawn')
 const gutil = require('gulp-util')
-const through = require('through2');
-const spawn = require('cross-spawn-async');
-const Q = require('q');
-const argv = require('minimist')(process.argv.slice(2));
-const PLUGIN = 'gulp-elm-test';
+const path = require('path')
+const through = require('through2')
 
-/**
- * Install all dependencies with --yes options.
- */
-function init() {
-  const deferred = Q.defer();
-  const proc = spawn('elm-make', ['--yes']);
-  var bStderr = new Buffer(0);
+const PLUGIN_NAME = 'gulp-elm-test'
 
-  proc.stderr.on('data', (stderr) => {
-    if (argv.verbose) {
-      gutil.log(`${stderr}`);
-    }
-    bStderr = Buffer.concat([bStderr, new Buffer(stderr)]);
-  });
+// some of the following code is based on https://github.com/sun-zheng-an/gulp-shell/blob/4de040ab0b96d05aba5d6e054b61f4a3ab3227e6/index.js, Copyright (c) 2014 Sun Zheng'an, under the MIT license
+function normalizeOptions(options) {
+    const pathToBin = path.join(process.cwd(), 'node_modules', '.bin');
+    const pathName = /^win/.test(process.platform) ? 'Path' : 'PATH';
+    const newPath = pathToBin + path.delimiter + process.env[pathName];
 
-  proc.on('close', (code) => {
-    if (code > 0) {
-      deferred.reject(new gutil.PluginError(PLUGIN, bStderr.toString()));
-    } else {
-      deferred.resolve();
-    }
-  })
-
-  return deferred.promise;
+    return _.extend({
+        elmTest: 'elm-test',
+        args: [],
+        verbose: false,
+        errorMessage: 'Running tests for `<%= file.path %>` failed with exit code <%= error.code %>',
+        quiet: false,
+        cwd: process.cwd(),
+        env: _.extend(process.env, _.fromPairs([[pathName, newPath]]), options ? options.env : undefined),
+    }, options);
 }
 
-function filename(file) {
-  return file.path.replace(file.base, '');
+function runCommand(command, args, options, file, done) {
+    const allArgs = (args || []).concat(options.args);
+    if (options.verbose) {
+        gutil.log(gutil.colors.cyan(command + ' ' + allArgs.join(' ')));
+    }
+
+    let stdout = null;
+    const child = spawn(command, allArgs, {
+        env: options.env,
+        cwd: options.cwd,
+        timeout: options.timeout,
+        stdio: [
+            'pipe',
+            options.quiet ? 'pipe' : process.stdout,
+            process.stderr,
+        ],
+    }).on('close', (code) => {
+        if (code !== 0) {
+            const errorContext = {
+                command: command,
+                file: file,
+                error: { code: code, },
+            };
+
+            if (options.quiet) {
+                // if output wasn't already display, show since there was a failed test
+                gutil.log(stdout.toString());
+            }
+
+            done({ message: gutil.template(options.errorMessage, errorContext), });
+        } else {
+            done();
+        }
+    });
+
+    if (options.quiet) {
+        // buffer output in case there's an error
+        stdout = new Buffer(0);
+        child.stdout.on('data', (chunk) => { stdout = Buffer.concat([ stdout, new Buffer(chunk), ]); });
+    }
 }
 
-/**
- * Run the test file
- * @param {string} file - Elm test file.
- */
-function runTest(file) {
-  gutil.log(`Running test ${filename(file)} ...`);
+function shell(options) {
+    options = normalizeOptions(options);
 
-  const deferred = Q.defer();
-  const proc = spawn('elm-test', [file.path]);
-  var bStderr = new Buffer(0);
-  var bStdout = new Buffer(0);
+    const stream = through.obj(function (file, unused, done) {
+        const self = this;
 
-  proc.stderr.on('data', (stderr) => {
-    if (argv.verbose) {
-      gutil.log(`${stderr}`);
-    }
-    bStderr = Buffer.concat([bStderr, new Buffer(stderr)]);
-  });
+        runCommand(options.elmTest, [ file.path, '--yes', ], options, file, function (error) {
+            if (error) {
+                self.emit('error', new gutil.PluginError({
+                    plugin: PLUGIN_NAME,
+                    message: error.message,
+                }));
+            } else {
+                self.push(file);
+            }
+            done();
+        });
+    });
 
-  proc.stdout.on('data', (data) => {
-    if (argv.verbose) {
-      gutil.log(`${data}`);
-    }
-    bStdout = Buffer.concat([bStdout, new Buffer(data)]);
-  });
+    stream.resume();
 
-  proc.on('close', (code) => {
-    if (argv.verbose) {
-      gutil.log(`exit with code ${code}`);
-    }
-    if (code > 0) {
-      deferred.reject(new gutil.PluginError(PLUGIN, "failed test"));
-    } else {
-      deferred.resolve(bStdout.toString());
-    }
-  });
-
-  return deferred.promise;
+    return stream;
 }
 
-/**
- * gulp task
- */
-function task() {
-  const errors = [];
-  return through.obj((file, encoding, callback) => {
-    init()
-      .then(() => runTest(file))
-      .then((output) => {
-        gutil.log(`Successful test: ${filename(file)}`);
-        callback(null, output)
-      })
-      .catch((error) => {
-        const errorMessage = `${error.message}: ${filename(file)}`;
-        errors.push(errorMessage);
-        gutil.log(errorMessage);
-        callback(); // delay errors until all test ran.
-      });
-  }).on('end', function end() {
-    if (errors.length > 0) {
-      this.emit('error', new gutil.PluginError('gulp-elm-test', errors.join('\n'), {
-        showStack: (argv.verbose) ? true : false
-      }));
-    }
-  });
-}
-
-module.exports = task;
-module.exports.init = init;
+module.exports = shell;

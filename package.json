@@ -4,8 +4,7 @@
   "description": "Gulp plugin for running elm-test",
   "main": "index.js",
   "scripts": {
-    "test": "cd examples && mocha ./test/main.js",
-    "bundle": "jspm bundle-sfx index.js dist/bundle.js --format cjs --skip-source-maps"
+    "test": "cd examples && mocha ./test/main.js"
   },
   "repository": {
     "type": "git",
@@ -23,32 +22,16 @@
   },
   "homepage": "https://github.com/abadi199/gulp-elm-test#readme",
   "dependencies": {
-    "cross-spawn-async": "^2.1.9",
+    "cross-spawn": "^4.0.0",
     "gulp-util": "^3.0.7",
-    "minimist": "^1.2.0",
-    "q": "^1.4.1",
-    "through2": "^2.0.1",
-    "elm-test": "^0.16.1-alpha3"
+    "lodash": "^4.16.1",
+    "through2": "^2.0.1"
   },
   "devDependencies": {
-    "jspm": "^0.16.31",
-    "mocha": "^2.4.5"
+    "mocha": "^2.4.5",
+    "elm-test": "^0.17.3"
   },
   "peerDependencies": {
-    "elm-test": "^0.16.1-alpha3"
-  },
-  "jspm": {
-    "dependencies": {
-      "cross-spawn-async": "npm:cross-spawn-async@^2.1.9",
-      "gulp-util": "npm:gulp-util@^3.0.7",
-      "minimist": "npm:minimist@^1.2.0",
-      "q": "npm:q@^1.4.1",
-      "through2": "npm:through2@^2.0.1"
-    },
-    "devDependencies": {
-      "babel": "npm:babel-core@^5.8.24",
-      "babel-runtime": "npm:babel-runtime@^5.8.24",
-      "core-js": "npm:core-js@^1.1.4"
-    }
+    "elm-test": "^0.17.3"
   }
 }
