@@ -1,3 +1,5 @@
+'use strict'
+
 const _ = require('lodash')
 const spawn = require('cross-spawn')
 const gutil = require('gulp-util')
