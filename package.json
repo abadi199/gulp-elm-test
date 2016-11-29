@@ -32,6 +32,6 @@
     "elm-test": "^0.17.3"
   },
   "peerDependencies": {
-    "elm-test": "^0.17.3"
+    "elm-test": ">= 0.17.3 < 1.0"
   }
 }
