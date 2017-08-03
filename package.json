@@ -1,6 +1,6 @@
 {
   "name": "gulp-elm-test",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Gulp plugin for running elm-test",
   "main": "index.js",
   "scripts": {
@@ -10,11 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/abadi199/gulp-elm-test.git"
   },
-  "keywords": [
-    "gulp",
-    "elm",
-    "elm-test"
-  ],
+  "keywords": ["gulp", "elm", "elm-test"],
   "author": "Abadi Kurniawan",
   "license": "MIT",
   "bugs": {
