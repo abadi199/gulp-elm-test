@@ -72,8 +72,9 @@ function shell(options) {
 
     const stream = through.obj(function (file, unused, done) {
         const self = this;
+        const absoluteFilePath = path.isAbsolute(file.path) ? path.relative(process.cwd(), file.path) : file.path;
 
-        runCommand(options.elmTest, [ file.path, '--yes', ], options, file, function (error) {
+        runCommand(options.elmTest, [ absoluteFilePath, '--yes', ], options, file, function (error) {
             if (error) {
                 self.emit('error', new gutil.PluginError({
                     plugin: PLUGIN_NAME,
