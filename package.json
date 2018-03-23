@@ -17,6 +17,7 @@
     "url": "https://github.com/abadi199/gulp-elm-test/issues"
   },
   "homepage": "https://github.com/abadi199/gulp-elm-test#readme",
+  "files": ["index.js"],
   "dependencies": {
     "cross-spawn": "^4.0.0",
     "gulp-util": "^3.0.7",
